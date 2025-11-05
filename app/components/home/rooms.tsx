@@ -27,7 +27,8 @@ const Rooms = () => {
     const fetchRooms = async () => {
       try {
         const res = await axios.get(
-          "https://dashboard.twilightguesthouse.com/web/rooms/get-all-rooms"
+          "https://dashboard.twilightguesthouse.com/web/rooms/get-all-rooms",
+          { withCredentials: true }
         );
 
         // API returns { success: true, menuItems: [...] }
