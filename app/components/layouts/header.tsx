@@ -1,49 +1,146 @@
 "use client";
 
-import Image from "next/image";
+import { useState, useCallback } from "react";
 import Link from "next/link";
+import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleMenu = useCallback(() => {
+    setIsOpen(prev => !prev);
+  }, []);
+
+  const closeMenu = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
   return (
-    <nav className="flex items-center justify-between px-10 py-4 bg-white shadow-sm">
-      {/* Left: Logo */}
-      <div className="flex items-center space-x-2">
-       
-        <h1 className="text-3xl font-semibold select-none">
-          <span className="text-teal-500 italic font-serif">T</span>
-          <span className="italic font-serif text-black">wilight</span>
-        </h1>
+    <nav
+      className="fixed top-0 left-0 w-full bg-white shadow-sm z-50"
+      aria-label="Main navigation"
+    >
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        {/* Logo with proper semantic markup */}
+        <div className="flex items-center space-x-2">
+          <Link
+            href="/"
+            className="flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-sm"
+            aria-label="Twilight Home"
+            onClick={closeMenu}
+          >
+            <h1
+              className="text-3xl font-semibold select-none"
+              aria-label="Twilight"
+            >
+              <span aria-hidden="true" className="text-teal-500 italic font-serif">Twilight</span>
+
+            </h1>
+          </Link>
+        </div>
+
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex space-x-10 text-lg" role="menubar" aria-label="Main menu">
+          <Link
+            href="/"
+            className="text-black hover:text-teal-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-sm px-2 py-1"
+            role="menuitem"
+            aria-current="page"
+          >
+            Home
+          </Link>
+          <Link
+            href="/rooms"
+            className="text-black hover:text-teal-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-sm px-2 py-1"
+            role="menuitem"
+          >
+            Rooms
+          </Link>
+          <Link
+            href="/contact"
+            className="text-black hover:text-teal-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-sm px-2 py-1"
+            role="menuitem"
+          >
+            Contact
+          </Link>
+        </div>
+
+        {/* Desktop Book Now Button */}
+        <div className="hidden md:block">
+          <Link
+            href="/rooms"
+            className="bg-teal-500 text-white font-semibold px-6 py-2 rounded-full hover:bg-teal-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+            role="button"
+            aria-label="Book now"
+          >
+            Book Now
+          </Link>
+        </div>
+
+        {/* Mobile Menu Button */}
+        <div className="md:hidden">
+          <button
+            onClick={toggleMenu}
+            className="p-2 rounded-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+            aria-expanded={isOpen}
+            aria-haspopup="true"
+            aria-controls="mobile-menu"
+            aria-label={isOpen ? "Close menu" : "Open menu"}
+          >
+            {isOpen ? (
+              <X size={24} aria-hidden="true" />
+            ) : (
+              <Menu size={24} aria-hidden="true" />
+            )}
+          </button>
+        </div>
       </div>
 
-      {/* Center: Nav Links */}
-      <div className="flex space-x-10 text-lg">
-        <Link
-          href="/"
-          className="text-teal-500 font-medium hover:text-teal-600 transition"
+      {/* Mobile Menu */}
+      {isOpen && (
+        <div
+          id="mobile-menu"
+          className="md:hidden bg-white shadow-md animate-in slide-in-from-top duration-200"
+          role="menu"
+          aria-label="Mobile menu"
         >
-          Home
-        </Link>
-        <Link
-          href="/rooms"
-          className="text-gray-800 hover:text-teal-500 transition"
-        >
-          Rooms
-        </Link>
-        <Link
-          href="/contact"
-          className="text-gray-800 hover:text-teal-500 transition"
-        >
-          Contact
-        </Link>
-      </div>
-
-      {/* Right: Book Now Button */}
-      <Link
-        href="/book"
-        className="bg-teal-500 text-white font-semibold px-6 py-2 rounded-full hover:bg-teal-600 transition"
-      >
-        Book Now
-      </Link>
+          <div className="flex flex-col px-6 py-4 space-y-4">
+            <Link
+              href="/"
+              className="text-black hover:text-teal-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-sm px-2 py-1"
+              role="menuitem"
+              aria-current="page"
+              onClick={closeMenu}
+            >
+              Home
+            </Link>
+            <Link
+              href="/rooms"
+              className="text-black hover:text-teal-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-sm px-2 py-1"
+              role="menuitem"
+              onClick={closeMenu}
+            >
+              Rooms
+            </Link>
+            <Link
+              href="/contact"
+              className="text-black hover:text-teal-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-sm px-2 py-1"
+              role="menuitem"
+              onClick={closeMenu}
+            >
+              Contact
+            </Link>
+            <Link
+              href="/book"
+              className="bg-teal-500 text-white font-semibold px-6 py-2 rounded-full hover:bg-teal-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 text-center"
+              role="menuitem"
+              onClick={closeMenu}
+            >
+              Book Now
+            </Link>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

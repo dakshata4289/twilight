@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import axios from "axios";
 
@@ -22,6 +23,7 @@ interface Room {
 const Rooms = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -31,7 +33,6 @@ const Rooms = () => {
           { withCredentials: true }
         );
 
-        // API returns { success: true, menuItems: [...] }
         if (res.data.success) {
           setRooms(res.data.menuItems || []);
         } else {
@@ -45,28 +46,53 @@ const Rooms = () => {
     fetchRooms();
   }, []);
 
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 3 < rooms.length ? prev + 3 : 0));
-  };
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
 
-  const prevSlide = () => {
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
+
+    return () => window.removeEventListener("resize", checkScreenSize);
+  }, []);
+
+  const getVisibleRoomsCount = useCallback(() => {
+    return isMobile ? 1 : 3;
+  }, [isMobile]);
+
+  const nextSlide = useCallback(() => {
+    const visibleCount = getVisibleRoomsCount();
     setCurrentIndex((prev) =>
-      prev - 3 >= 0 ? prev - 3 : Math.max(rooms.length - 3, 0)
+      prev + visibleCount < rooms.length ? prev + visibleCount : 0
     );
-  };
+  }, [rooms.length, getVisibleRoomsCount]);
+
+  const prevSlide = useCallback(() => {
+    const visibleCount = getVisibleRoomsCount();
+    setCurrentIndex((prev) =>
+      prev - visibleCount >= 0 ? prev - visibleCount : Math.max(rooms.length - visibleCount, 0)
+    );
+  }, [rooms.length, getVisibleRoomsCount]);
+
+  const getImageUrl = useCallback((room: Room) => {
+    const filename = room.image_url || room.image_url1 || room.image_url2;
+    return `https://dashboard.twilightguesthouse.com/web/uploads/${filename.replace(/^\/+/, "")}`;
+  }, []);
+
+  const visibleRoomsCount = getVisibleRoomsCount();
+  const shouldShowControls = rooms.length > visibleRoomsCount;
 
   return (
     <section className="py-16 bg-[#F5F5E9]">
       <div className="max-w-7xl mx-auto px-6 text-center">
-        <div className="flex justify-between items-center flex-wrap mb-10">
-          <h2 className="text-4xl font-extrabold text-gray-900">
-            Studio &{" "}
-            <span className="text-teal-600 underline underline-offset-8 decoration-teal-300">
-              Deluxe
-            </span>{" "}
+        <div className="flex justify-between items-center flex-col md:flex-row gap-6 mb-10">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900">
+            Studio & Deluxe{" "}
+
             Rooms
           </h2>
-          <button className="bg-teal-600 text-white px-6 py-2 rounded-md hover:bg-teal-700 transition">
+          <button className="bg-teal-600 text-white px-6 py-2 rounded-md hover:bg-teal-700 transition whitespace-nowrap">
             View All Rooms
           </button>
         </div>
@@ -74,28 +100,35 @@ const Rooms = () => {
         {rooms.length > 0 ? (
           <div className="flex justify-center gap-6 overflow-hidden">
             {rooms
-              .slice(currentIndex, currentIndex + 3)
+              .slice(currentIndex, currentIndex + visibleRoomsCount)
               .map((room) => (
                 <div
                   key={room.id}
-                  className="bg-white rounded-2xl shadow-lg overflow-hidden w-full max-w-sm transform hover:scale-[1.02] transition"
+                  className={`${isMobile ? "w-full max-w-sm" : "w-full max-w-sm"
+                    } flex-shrink-0`}
                 >
-                  <div className="relative h-64 w-full">
-                    <Image
-                      src={`https://dashboard.twilightguesthouse.com/uploads/${room.image_url}`}
-                      alt={room.room_type}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="py-4 px-3">
-                    <h3 className="text-xl font-extrabold text-gray-800">
-                      {room.room_type}
-                    </h3>
-                    <p className="text-gray-600 text-sm mt-1">
-                      {room.description}
-                    </p>
-                  </div>
+                  <Link
+                    href={`/rooms/${room.id}`}
+                    className="bg-white rounded-2xl shadow-lg overflow-hidden block transform hover:scale-[1.02] transition"
+                  >
+                    <div className="relative h-64 w-full">
+                      <Image
+                        src={getImageUrl(room)}
+                        alt={room.room_type}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
+                      />
+                    </div>
+                    <div className="py-4 px-3">
+                      <h3 className="text-xl font-extrabold text-gray-800">
+                        {room.room_type}
+                      </h3>
+                      <p className="text-gray-500 text-xs mt-2">
+                        Max Occupancy: {room.max_occupancy}, Beds: {room.beds}
+                      </p>
+                    </div>
+                  </Link>
                 </div>
               ))}
           </div>
@@ -103,17 +136,19 @@ const Rooms = () => {
           <p className="text-gray-600">No rooms available.</p>
         )}
 
-        {rooms.length > 3 && (
+        {shouldShowControls && (
           <div className="flex justify-center items-center gap-6 mt-10">
             <button
               onClick={prevSlide}
               className="bg-teal-600 p-3 rounded-full text-white hover:bg-teal-700 transition"
+              aria-label="Previous rooms"
             >
               <ChevronLeft size={24} />
             </button>
             <button
               onClick={nextSlide}
               className="bg-teal-600 p-3 rounded-full text-white hover:bg-teal-700 transition"
+              aria-label="Next rooms"
             >
               <ChevronRight size={24} />
             </button>
