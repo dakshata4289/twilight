@@ -43,7 +43,7 @@ export default function Navbar() {
         <div className="hidden md:flex space-x-10 text-lg" role="menubar" aria-label="Main menu">
           <Link
             href="/"
-            className="text-black hover:text-teal-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-sm px-2 py-1"
+            className="text-black font-semibold hover:text-teal-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-sm px-2 py-1"
             role="menuitem"
             aria-current="page"
           >
@@ -51,31 +51,22 @@ export default function Navbar() {
           </Link>
           <Link
             href="/rooms"
-            className="text-black hover:text-teal-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-sm px-2 py-1"
+            className="text-black font-semibold hover:text-teal-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-sm px-2 py-1"
             role="menuitem"
           >
             Rooms
           </Link>
           <Link
             href="/contact"
-            className="text-black hover:text-teal-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-sm px-2 py-1"
+            className="text-black font-semibold hover:text-teal-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-sm px-2 py-1"
             role="menuitem"
           >
             Contact
           </Link>
         </div>
 
-        {/* Desktop Book Now Button */}
-        <div className="hidden md:block">
-          <Link
-            href="/rooms"
-            className="bg-teal-500 text-white font-semibold px-6 py-2 rounded-full hover:bg-teal-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-            role="button"
-            aria-label="Book now"
-          >
-            Book Now
-          </Link>
-        </div>
+
+
 
         {/* Mobile Menu Button */}
         <div className="md:hidden">
@@ -107,7 +98,7 @@ export default function Navbar() {
           <div className="flex flex-col px-6 py-4 space-y-4">
             <Link
               href="/"
-              className="text-black hover:text-teal-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-sm px-2 py-1"
+              className="text-black font-semibold hover:text-teal-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-sm px-2 py-1"
               role="menuitem"
               aria-current="page"
               onClick={closeMenu}
@@ -116,7 +107,7 @@ export default function Navbar() {
             </Link>
             <Link
               href="/rooms"
-              className="text-black hover:text-teal-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-sm px-2 py-1"
+              className="text-black font-semibold hover:text-teal-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-sm px-2 py-1"
               role="menuitem"
               onClick={closeMenu}
             >
@@ -124,20 +115,13 @@ export default function Navbar() {
             </Link>
             <Link
               href="/contact"
-              className="text-black hover:text-teal-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-sm px-2 py-1"
+              className="text-black font-semibold hover:text-teal-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-sm px-2 py-1"
               role="menuitem"
               onClick={closeMenu}
             >
               Contact
             </Link>
-            <Link
-              href="/book"
-              className="bg-teal-500 text-white font-semibold px-6 py-2 rounded-full hover:bg-teal-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 text-center"
-              role="menuitem"
-              onClick={closeMenu}
-            >
-              Book Now
-            </Link>
+
           </div>
         </div>
       )}
